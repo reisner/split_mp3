@@ -26,18 +26,11 @@ print("Length of file: " + len(segment_length_in_sec))
 sec_per_chunk = min_per_chunk * 60
 
 num_chunks = math.ceil(segment_length_in_sec / float(sec_per_chunk))
-#     return [audio_segment[i * chunk_length:(i + 1) * chunk_length]
-#             for i in range(int(number_of_chunks))]
 
 if num_chunks > 1:
     print("Splitting into " + num_chunks + " chunks.")
+    for i in range(int(num_chunks)):
+        chunk = segment[i * sec_per_chunk:(i + 1) * sec_per_chunk]
+        # first_half.export("blah.mp3", format="mp3")
 else:
     raise SystemExit('File is not long enough!')
-
-#:45
-
-# halfway_point = len(sound) // 2
-# first_half = sound[:halfway_point]
-#
-# # create a new file "first_half.mp3":
-# first_half.export("/path/to/first_half.mp3", format="mp3")
