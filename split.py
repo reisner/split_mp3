@@ -21,10 +21,12 @@ output_file_prefix = re.sub('\.mp3$', '', input_file) + "_"
 print("Splitting into " + str(min_per_chunk) + " min chunks")
 print("Reading: " + input_file)
 
-segment_length_in_ms = float(pydub.utils.mediainfo(input_file)['duration']) * 1000
-print("Length of file: " + str(segment_length_in_ms / (1000 * 60)) + "min")
+#segment_length_in_ms = float(pydub.utils.mediainfo(input_file)['duration']) * 1000
+#print("Length of file: " + str(segment_length_in_ms / (1000 * 60)) + "min")
 
 segment = AudioSegment.from_mp3(input_file)
+#segment.export("/output/file.wav", format="wav")
+
 # segment_length_in_ms = len(segment) # This is not accurate with MP3s
 ms_per_chunk = min_per_chunk * 60 * 1000
 num_chunks = math.ceil(segment_length_in_ms / float(ms_per_chunk))
