@@ -1,5 +1,6 @@
 import argparse
 import math
+import pydub
 from pydub import AudioSegment
 import re
 
@@ -20,20 +21,23 @@ output_file_prefix = re.sub('\.mp3$', '', input_file) + "_"
 print("Splitting into " + str(min_per_chunk) + " min chunks")
 print("Reading: " + input_file)
 
+segment_length_in_ms = float(pydub.utils.mediainfo(input_file)['duration']) * 1000
+print("Length of file: " + str(segment_length_in_ms / (1000 * 60)) + "min")
+
 segment = AudioSegment.from_mp3(input_file)
-segment_length_in_sec = len(segment) / 1000
-
-print("Length of file: " + str(segment_length_in_sec) + "sec")
-
-sec_per_chunk = min_per_chunk #* 60
-num_chunks = math.ceil(segment_length_in_sec / float(sec_per_chunk))
+# segment_length_in_ms = len(segment) # This is not accurate with MP3s
+ms_per_chunk = min_per_chunk * 60 * 1000
+num_chunks = math.ceil(segment_length_in_ms / float(ms_per_chunk))
 
 if num_chunks > 1:
     print("Splitting into " + str(num_chunks) + " chunks.")
     for i in range(int(num_chunks)):
-        start = i * sec_per_chunk
-        end = (i + 1) * sec_per_chunk
-        chunk = segment[start * 1000 : end * 1000]
+        start = i * ms_per_chunk
+        if (i != 0):
+            # Start 10 seconds earlier
+            start = start - 10000
+        end = (i + 1) * ms_per_chunk
+        chunk = segment[start : end].fade_in(3000)
         output_file = output_file_prefix + "%03d" % (i + 1) + ".mp3"
         print("     ... Saving from " +
               str(start) + " to " + str(end) +
